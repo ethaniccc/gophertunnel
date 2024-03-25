@@ -5,6 +5,11 @@ import (
 	"github.com/sandertv/gophertunnel/minecraft/protocol"
 )
 
+const (
+	CorrectionTypePlayer = iota
+	CorrectionTypeVechile
+)
+
 // CorrectPlayerMovePrediction is sent by the server if and only if StartGame.ServerAuthoritativeMovementMode
 // is set to AuthoritativeMovementModeServerWithRewind. The packet is used to correct movement at a specific
 // point in time.
@@ -19,6 +24,9 @@ type CorrectPlayerMovePrediction struct {
 	OnGround bool
 	// Tick is the tick of the movement which was corrected by this packet.
 	Tick uint64
+	// CorrectionType is the correction type send to the player. This influences how the rewind is performed
+	// on the client.
+	CorrectionType byte
 }
 
 // ID ...
@@ -31,4 +39,5 @@ func (pk *CorrectPlayerMovePrediction) Marshal(io protocol.IO) {
 	io.Vec3(&pk.Delta)
 	io.Bool(&pk.OnGround)
 	io.Varuint64(&pk.Tick)
+	io.Uint8(&pk.CorrectionType)
 }
